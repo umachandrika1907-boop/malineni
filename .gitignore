@@ -1,0 +1,29 @@
+# Environment Variables & Secrets
+**/.env
+**/.env.local
+**/.env.*.local
+!**/.env.example
+
+# Dependencies
+**/node_modules/
+**/.venv/
+**/.venv*/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+
+# Databases
+**/*.db
+**/*.sqlite3
+
+# Build & Dist
+**/dist/
+**/build/
+
+# Logs
+**/*.log
+
+# Firebase
+.firebase/
+

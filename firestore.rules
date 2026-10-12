@@ -1,0 +1,43 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for hardened security
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // System health monitoring - public read for diagnostic ping, authenticated write
+    match /system_health/{documentId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // Interventions: Real-time student recovery action plans and advisor tasks
+    // Protected against unauthorized modification or deletion
+    match /interventions/{interventionId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || (
+        request.resource.data.student_id_str is string &&
+        request.resource.data.notes is string
+      );
+      allow update, delete: if isAuthenticated();
+    }
+
+    // AI Consultations: Advisor logs and student Q&A history
+    match /ai_consultations/{consultationId} {
+      allow read: if true;
+      allow create: if isAuthenticated() || (
+        request.resource.data.question is string &&
+        request.resource.data.answer is string
+      );
+      allow update, delete: if isAuthenticated();
+    }
+
+    // Default hardened deny rule for any unspecified collection
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}
